@@ -46,6 +46,7 @@ public class ConsumerProducer {
         producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         producer = new KafkaProducer<>(producerProps);
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
         try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(consumerProps)) {
             consumer.subscribe(Collections.singleton("events2"), new ConsumerRebalanceListener() {
@@ -66,11 +67,8 @@ public class ConsumerProducer {
                 for (ConsumerRecord<String, String> data : records) {
                     LOG.info("-------------- Consumer ----------- topic = {}, key = {}, value = {} => partition = {}, offset= {}", "events2", data.key(), data.value(), data.partition(), data.offset());
                     if (data.value().equals("v7")) {  // Filter data with value=v7
-                        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
                         //newSingleThreadScheduledExecutor --> Creates an Executor that uses a single worker thread operating off an unbounded queue.
                         executor.scheduleAtFixedRate(() -> send("events1"), 0, 3, TimeUnit.SECONDS);
-
-                        Runtime.getRuntime().addShutdownHook(new Thread(producer::close));
                     }
                 }
             }
