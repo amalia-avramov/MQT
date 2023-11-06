@@ -16,7 +16,7 @@ public class CompanyProducer {
     private static final String OUR_CLIENT_ID = "firstProducer";
 
     //private static Producer<String, Company> producer;
-    private static Producer<String, Company> producer;
+    private static Producer<String, JCompany> producer;
 
     public static Properties buildProducerPropsMap(){
         Properties props = new Properties();
@@ -31,7 +31,7 @@ public class CompanyProducer {
         producer = new KafkaProducer<>(buildProducerPropsMap());
 
         // create Company item for topic events2 with key
-        Company data = new Company("Intel", 2, "Intel industries");
+        JCompany data = new JCompany("Intel", 2, "Intel industries");
 
         // send messages(records) synchronous
         send("events2", data);
@@ -39,8 +39,8 @@ public class CompanyProducer {
         producer.close();
     }
 
-    public static void send(String topic, Company comp){
-        ProducerRecord<String, Company> data = new ProducerRecord<>(topic, comp);
+    public static void send(String topic, JCompany comp){
+        ProducerRecord<String, JCompany> data = new ProducerRecord<>(topic, comp);
         try {
             RecordMetadata meta = producer.send(data).get();
             LOG.info("key = {}, value = {} ==> partition = {}, offset = {}", data.key(), data.value(), meta.partition(), meta.offset());

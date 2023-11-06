@@ -55,7 +55,7 @@ public class JsonProducer {
         producer.close();
         //call method send, with topic name
         //  send("events1");
-        //  send("events2");
+//          send("events2");
     }
 
     public static void send(String topic){

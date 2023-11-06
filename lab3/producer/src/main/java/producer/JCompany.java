@@ -1,8 +1,6 @@
 package producer;
 
-import java.util.List;
-
-public class Company {
+public class JCompany {
     private String company;
     int tradeNumber;
     String registeredName;
@@ -31,8 +29,8 @@ public class Company {
         this.registeredName = registeredName;
     }
 
-    public Company() {}
-    public Company(String name, int no, String registeredName) {
+    public JCompany() {}
+    public JCompany(String name, int no, String registeredName) {
         this.company = name;
         this.tradeNumber = no;
         this.registeredName = registeredName;

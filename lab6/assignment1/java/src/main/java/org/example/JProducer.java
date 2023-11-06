@@ -1,19 +1,18 @@
-package producer;
+package org.example;
 
-import io.confluent.kafka.serializers.KafkaAvroSerializer;
-import module4.Company;
+import io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializer;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
-public class AvroProducer {
+public class JProducer {
 
 	private final static String BOOTSTRAP_SERVERS = ":9092";
 
-	private final static String TOPIC = "avro-topic";
-   // private final static String TOPIC = "events2";
+	private final static String TOPIC = "company-json";
+
 	private final static String CLIENT_ID = "avro-test";
 
 	public static void main(String[] args) {
@@ -21,18 +20,18 @@ public class AvroProducer {
 		props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
 		props.put(ProducerConfig.CLIENT_ID_CONFIG, CLIENT_ID);
 		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-		props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class.getName());
+		props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaJsonSchemaSerializer.class.getName());
 		props.put("schema.registry.url","http://localhost:8081");
 
-		Company comp = new Company();
-		comp.setTradeNumber(222);
-		comp.setRegisteredName("e-mag");
-		final Producer<String , Company> producer = new KafkaProducer<>(props);
+		JCompany comp = new JCompany();
+		//comp.setTradeNumber(12345);
+		comp.setRegisteredName("MyCompany");
+		final Producer<String, JCompany> producer = new KafkaProducer<>(props);
 		try {
-			final ProducerRecord<String, Company> data = new ProducerRecord<>(TOPIC, "1112", comp);
+			final ProducerRecord<String, JCompany> data = new ProducerRecord<>(TOPIC, "12345", comp);
 			try {
 				RecordMetadata meta = producer.send(data).get();
-				System.out.printf("lllllllllllllllll key=%s, value=%s => partition=%d, offset=%d\n", data.key(), data.value(),
+				System.out.printf("lllllllllllllllll key=%s, Company name=%s => partition=%d, offset=%d\n", data.key(), data.value().getRegisteredName(),
 						meta.partition(), meta.offset());
 			} catch (InterruptedException | ExecutionException e) {
 				System.out.printf("Exception %s\n", e.getMessage());
@@ -43,3 +42,4 @@ public class AvroProducer {
 		}
 	}
 }
+
